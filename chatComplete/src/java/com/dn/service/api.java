@@ -157,11 +157,11 @@ public class api {
     public JSONWithPadding getUserEntityByIdJsonp (@QueryParam("callback") String callback,
                                  @PathParam("id") String id) {
         Gson gson = new Gson();
-        //Users msg = usersFacadeREST.find(id);
-        String msg= new String("ll");
+        Users msg = usersFacadeREST.find(id);
+        //String msg= new String("ll");
        // msg = new Users();
         
-        String json = gson.toJson(msg,String.class);
+        String json = gson.toJson(msg,Users.class);
         return new JSONWithPadding(json,callback);
     } 
  }
