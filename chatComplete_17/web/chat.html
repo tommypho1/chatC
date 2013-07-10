@@ -1,0 +1,103 @@
+<!DOCTYPE html> 
+
+<html> 
+	<head> 
+	<meta charset="utf-8">
+	<title>Chat page</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+	<style>
+		.ui-header .ui-title, .ui-footer .ui-title { margin-right: 0 !important; margin-left: 0 !important; } 
+	</style>	
+	
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+        <script src="jquery.session.js"></script>
+        <script type="text/javascript">
+           
+            
+            var rootURLgetListAllUsersId="webresources/api/getListAllUsersId";
+            
+            var listAllUsersId = null;
+            function getListAllUsersId() {
+            $.ajax({
+                        type: 'GET',
+                        url: rootURLgetListAllUsersId,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        processData: false, async: false,
+                        success: function (msg) {
+                            listAllUsersId = msg;
+                            
+                          
+                        }
+                 });
+            }
+            
+            function mountListAllUsersIdToDiv(){
+
+                $.each(listAllUsersId, function(key, val) {
+                  if (!(val===$.session.get('userid')))
+                    $( "#listUsers" ).append('<li><a href="chatWithSomeone.html?someone=' + val+'" rel="external">'+val+' </a></li>').listview("refresh");
+             //      $( '<a href="#" data-role="button" data-icon="star" id=”b1”>Star</a>' ).appendTo( ".ui-content" ).button();
+                  
+                });
+              //  auto();
+           }
+           
+          
+            $(document).ready(function(){
+               
+                var token = $.session.get('token');
+                if (token===undefined)
+                {
+                    document.location.href="login.html";
+                }
+                
+              
+                
+                var userid = $.session.get('userid');
+               
+                $.session.set('caller', "chat");
+                getListAllUsersId();
+                mountListAllUsersIdToDiv();
+                
+                $("#mainpage").append(userid);
+                
+                $("#mainpageButton").bind("click", function(event,ui){
+                    document.location.href="mainpage.html";
+		});
+               
+               
+
+            });
+	</script>
+	</head> 
+    <body>
+        
+        
+        <div data-role="page" id="YourOwnGroups">
+            <div data-role="header">
+                <a href="#" id="mainpageButton" data-icon="back">Back</a>
+		<h1 id="mainpage">Chat<br></h1>
+                
+                
+            </div>
+
+	<div data-role="content">
+            
+           <ul data-role="listview" id="listUsers" data-autodividers="true" data-filter="true" data-filter-placeholder="Search Group Name...">
+               
+           </ul>
+
+            
+	</div>
+            
+            
+      </div>  
+        
+        
+        
+       
+    </body>
+</html>

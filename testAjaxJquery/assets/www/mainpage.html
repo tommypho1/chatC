@@ -1,0 +1,117 @@
+<!DOCTYPE html> 
+
+<html> 
+	<head> 
+	<meta charset="utf-8">
+	<title>Main page</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" /> 
+	<style>
+		.ui-header .ui-title, .ui-footer .ui-title { margin-right: 0 !important; margin-left: 0 !important; }
+	</style>	
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+        <script src="jquery.session.js"></script>
+	<script type="text/javascript">
+          
+         
+          
+          
+          
+          var rootURLmessageAlert="webresources/api/messageAlert";
+            
+            function messageAlert(useridtmp) {
+            $.ajax({
+                        type: 'GET',
+                        url: rootURLmessageAlert + '/' + useridtmp ,
+                        
+                        success: function (msg) {
+                            
+                          if (msg==="alert")
+                            $("#messageBoxButton").attr("style","background: red; color: black;");
+                          else
+                            $("#messageBoxButton").removeAttr("style") ;
+                               
+                        }
+                 });
+            }
+            
+             var wsocket;   
+            var startChat="off";
+            function connect() {
+            var origin ="ws://"+window.location.host+"/chatComplete/chat";
+            wsocket = new WebSocket(origin);
+            wsocket.onmessage = onMessage;
+            }
+            
+             function onMessage(evt) {
+                var msg = JSON.parse(evt.data);
+                if (msg.type==="SetupMessage")
+                {
+                    if (msg.content==="send me your userid")
+                    {
+                        var useridMsg = {};
+                        useridMsg.type = "UseridMessage";
+                        useridMsg.userid = $.session.get('userid');
+                        var jsonstr1 = JSON.stringify(useridMsg);
+                        wsocket.send(jsonstr1);
+                    }
+                }
+                if (msg.content==="chat starting")
+                {
+                     startChat = "on";
+                }
+                if (startChat === "on")
+                {
+                     messageAlert($.session.get('userid'));
+                }
+             }
+            
+            
+            $(document).ready(function(){
+                var token = $.session.get('token');
+                if (token===undefined)
+                {
+                    document.location.href="login.html";
+                }
+                
+            
+                
+                var userid = $.session.get('userid');
+               
+                  messageAlert(userid);
+                
+                $("#mainpage").append(userid);
+                connect();
+               
+                
+                $("#logoutButton").bind("click", function(event,ui){
+                    $.session.clear();
+                    document.location.href="login.html";
+		});
+            });
+	</script>
+	</head> 
+    <body>
+        
+        
+        <div data-role="page" id="MainPage">
+            <div data-role="header">
+		<h1 id="mainpage">Main Page - </h1>
+                
+                
+            </div>
+
+	<div data-role="content">
+            <a href="chat.html" data-role="button" id="chatButton" data-theme="b" rel="external">Chat</a>
+            <a href="messageBox.html" data-role="button" id="messageBoxButton" data-theme="b" rel="external">Message Box</a>
+            <a href="#" data-role="button" id="logoutButton" data-theme="b">Logout</a>
+        </div>
+            
+        
+             <div data-role="footer">
+
+            </div>
+       </div>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+	<head
+		<title></title>
+		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" src="websocket.js"></script>
+		<script language="javascript" type="text/javascript">  
+ 
+ 
+
+function init() { // new socket
+	var socket = new WebSocket('ws://echo.websocket.org');
+			 
+	// push a message after the connection is established.
+	socket.onopen = function() {
+		socket.send('Hello World')
+	};
+			
+	// alerts message pushed from server
+	socket.onmessage = function(msg) {
+		alert(JSON.stringify(msg));
+		alert(msg.data);
+	};
+			
+	// alert close event
+	socket.onclose = function() {
+		alert('closed');
+	};
+ }  
+
+window.addEventListener("load", init, false);  
+</script>
+	<body>		
+	</body>
+</html>
